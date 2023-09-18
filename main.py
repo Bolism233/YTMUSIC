@@ -1,6 +1,7 @@
 import requests
 import json
-from credentials import api_key
+import pylast
+from credentials import api_key, api_lastfm, api_secret
 
 ### Obtain User Playlist
 """ playlist_link = input("Enter your playlist link: ") """
@@ -40,15 +41,49 @@ for video in videos:
         print(f"Artist Name: {artist_name}")
         print(f"Song Name: {song_name}")
 
+        ### store song into song_info
         song_info.update({song_name: artist_name})
         
     else:
         print("Title format not recognized.")
     print("\n")
 
-print("Song Info: \n")
+""" print("Song Info: \n")
 for key,value, in song_info.items():
-    print(f"{key}, {value}")
+    print(f"{key}, {value}") """
+
+network = pylast.LastFMNetwork(api_key=api_lastfm, api_secret=api_secret)
+
+# Replace with the artist and song names you're interested in
+artist_name = "Justin Bieber"
+song_title = "What do you Mean"
+
+# Search for the artist
+artist_results = network.search_for_artist(artist_name)
+
+if artist_results:
+    # Get the first artist from the search results
+    artist = artist_results[0]
+
+    # Retrieve a list of the artist's tracks
+    tracks = artist.get_top_tracks()
+
+    # Find the desired song in the list of tracks
+    for track in tracks:
+        if track.title.lower() == song_title.lower():
+            # Get the top tags (genres) associated with the track
+            tags = track.get_top_tags()
+            if tags:
+                genres = [tag.item.name for tag in tags]
+                print(f"Genres for '{song_title}' by {artist_name}: {', '.join(genres)}")
+            else:
+                print("Genre information not available for this song.")
+            break
+    else:
+        print(f"'{song_title}' by {artist_name} not found in top tracks.")
+else:
+    print(f"Artist '{artist_name}' not found.")
+
 
 """ # Serializing json
 json_object = json.dumps(videos, indent=4)
