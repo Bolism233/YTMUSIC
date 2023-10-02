@@ -3,7 +3,7 @@ import json
 import pylast
 from credentials import api_key, api_lastfm, api_secret
 
-### Obtain User Playlist
+### Obtain User Playlist via link
 """ playlist_link = input("Enter your playlist link: ") """
 playlist_link = "https://youtube.com/playlist?list=PLTOXykx0lDH5nrxwnRBgH4d1ZbiBMUTPg&si=G9dV9bCgfphEYufK"
 parts = playlist_link.split("list=")
@@ -58,7 +58,22 @@ network = pylast.LastFMNetwork(api_key=api_lastfm, api_secret=api_secret)
 artist_name = "Justin Bieber"
 song_title = "What do you Mean"
 
-# Search for the artist
+url = f'http://ws.audioscrobbler.com/2.0/?method=track.search&track={song_title}&artist={artist_name}&api_key={api_lastfm}&format=json'
+
+# Make the GET request
+response = requests.get(url)
+
+# Parse the JSON response
+data = response.json()
+
+# Extract information from the response
+tracks = data['results']['trackmatches']['track']
+
+for track in tracks:
+    print(f"Track: {track['name']} by {track['artist']}")
+
+
+""" # Search for the artist
 artist_results = network.search_for_artist(artist_name)
 
 if artist_results:
@@ -83,14 +98,7 @@ if artist_results:
         print(f"'{song_title}' by {artist_name} not found in top tracks.")
 else:
     print(f"Artist '{artist_name}' not found.")
-
-
-""" # Serializing json
-json_object = json.dumps(videos, indent=4)
- 
-# Writing to sample.json
-with open("sample.json", "w") as outfile:
-    outfile.write(json_object)
  """
+
 
 # Now, you can work with the 'data' variable to access the video information within the playlist.
