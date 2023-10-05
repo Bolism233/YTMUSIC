@@ -9,7 +9,5 @@
 4. Obtain the song label/category from lastfm.api?
 
 ## Next Step:
-**optimize request code to reduce repetition**
-**Get genre/label of the music from 'track'**
 **Find similar music**
 

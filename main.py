@@ -1,4 +1,5 @@
 import requests, json, pylast, re
+from search import search_track
 from collections import defaultdict
 from credentials import api_key, api_lastfm, api_secret
 
@@ -19,7 +20,7 @@ else:
     print("Invalid playlist link.")
 
 ### Obtain PlayList information via API
-url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=50"
+url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=20"
 response = requests.get(url)
 data = response.json()
 videos = data.get("items", [])
@@ -31,7 +32,7 @@ for video in videos:
     video_description = snippet.get("description", "No Description")
     video_id = video["snippet"]["resourceId"]["videoId"]
 
-    """ print(f"Video Title: {video_title}") """
+    # print(f"Video Title: {video_title}")
     parts = video_title.split(" - ")
     if len(parts) >= 2:
         artist_name = parts[0]
@@ -44,47 +45,16 @@ for video in videos:
         ### store song into song_info
         song_info[artist_name].append(song_name)
         
-    else:
-        print("Title format not recognized.")
+    """ else:
+        print("Title format not recognized.") """
+        
 
+""" search_track("Photograph", "Ed Sheeran") """
 
-for artist_name, song_name in song_info.items():
-    print(f"Artist Name: {artist_name}")
-    print(f"Song Name: {song_name}")
-
-for artist_name, song_name in song_info.items():
-    if((len(song_name) > 1) and artist_name == "Ed Sheeran"):
-        for song in song_name:
-            print(f"Artist Name: {artist_name}, Song List: {song}")
-            url = f'http://ws.audioscrobbler.com/2.0/?method=track.search&track={song}&artist={artist_name}&api_key={api_lastfm}&format=json'
-            # Make the GET request
-            response = requests.get(url)
-            # Parse the JSON response
-            data = response.json()
-            # Extract information from the response
-            try:
-                if 'trackmatches' in data['results'] and 'track' in data['results']['trackmatches']:
-                    # Get the first matching track
-                    track = data['results']['trackmatches']['track'][0]
-                    print(f"Track: {track['name']} by {track['artist']}")
-                else:
-                    print("Track not found.")
-            except:
-                print("not working")
-    
-    else:
-        url = f'http://ws.audioscrobbler.com/2.0/?method=track.search&track={song_name}&artist={artist_name}&api_key={api_lastfm}&format=json'
-        # Make the GET request
-        response = requests.get(url)
-        # Parse the JSON response
-        data = response.json()
-        # Extract information from the response
-        try:
-            if 'trackmatches' in data['results'] and 'track' in data['results']['trackmatches']:
-                # Get the first matching track
-                track = data['results']['trackmatches']['track'][0]
-                print(f"Track: {track['name']} by {track['artist']}")
-            else:
-                print("Track not found.")
-        except:
-            print("not working")
+#Obtain track info in lastfm
+for artist_name, song_names in song_info.items():
+    for song_name in song_names:
+        if len(song_name) > 1:
+            search_track(artist_name, song_name)
+        else:
+            search_track(artist_name, song_names)
