@@ -1,5 +1,5 @@
 import requests, json, pylast, re
-from search import search_track
+from search import search
 from collections import defaultdict
 from credentials import api_key, api_lastfm, api_secret
 
@@ -49,12 +49,14 @@ for video in videos:
         print("Title format not recognized.") """
         
 
-""" search_track("Photograph", "Ed Sheeran") """
-
 #Obtain track info in lastfm
-for artist_name, song_names in song_info.items():
+similar_songs = defaultdict(list) # storing similar songs info
+
+search(song_info)
+
+""" for artist_name, song_names in song_info.items():
     for song_name in song_names:
         if len(song_name) > 1:
-            search_track(artist_name, song_name)
+            artist_name, song_name = search_track(artist_name, song_name)
         else:
-            search_track(artist_name, song_names)
+            artist_name, song_name = search_track(artist_name, song_names) """

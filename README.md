@@ -9,5 +9,6 @@
 4. Obtain the song label/category from lastfm.api?
 
 ## Next Step:
-**Find similar music**
+**Put similar music and artist in some container**
+**Create a playlist using spotify api**
 
