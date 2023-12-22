@@ -5,7 +5,7 @@ from credentials import api_key, api_lastfm, api_secret
 
 ### Obtain User Playlist via link
 """ playlist_link = input("Enter your playlist link: ") """
-playlist_link = "https://youtube.com/playlist?list=PLTOXykx0lDH5nrxwnRBgH4d1ZbiBMUTPg&si=G9dV9bCgfphEYufK"
+playlist_link = "https://youtube.com/playlist?list=PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj&si=aoAUKa4pzPtanlDT"
 parts = playlist_link.split("list=")
 
 # Check if "list=" is found in the URL

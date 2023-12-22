@@ -21,13 +21,13 @@ def search_track(artist_name, song_name):
     try:
         if 'trackmatches' in data['results'] and 'track' in data['results']['trackmatches']:
             track = data['results']['trackmatches']['track'][0]
-            #print(f"Track: {track['name']} by {track['artist']}")
+            print(f"\nTrack: {track['name']} by {track['artist']}")
 
             art = track['artist']
             song = track['name']
             find_similar(art, song)
     except Exception as e:
-        # print(f"An error occurred: {str(e)}")
+        print(f"An error occurred: {str(e)}")
         return []
 
 
@@ -44,5 +44,8 @@ def find_similar(art, song):
             artist = data['similartracks']['track'][0]['artist']['name']
             print(f"{similar_tracks} + {artist}")
             return similar_tracks, artist
+        else:
+            print("Didn't find any result")
     except:
+        print("Didn't find any result")
         return []
