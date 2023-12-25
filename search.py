@@ -42,10 +42,10 @@ def find_similar(art, song):
         if 'similartracks' in data and 'track' in data['similartracks']:
             similar_tracks = data['similartracks']['track'][0]['name']
             artist = data['similartracks']['track'][0]['artist']['name']
-            print(f"{similar_tracks} + {artist}")
+            print(f"Similar Track: {similar_tracks} + {artist}")
             return similar_tracks, artist
-        else:
-            print("Didn't find any result")
+        # else:
+            # print("Didn't find any result")
     except:
         print("Didn't find any result")
         return []
