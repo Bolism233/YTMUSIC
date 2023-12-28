@@ -1,6 +1,6 @@
 import requests, json, pylast, re
 from search import search
-from mongo import insert_data
+from mongo import insert_data, delete_data
 from collections import defaultdict
 from credentials import api_key, api_lastfm, api_secret
 
@@ -21,7 +21,7 @@ else:
     print("Invalid playlist link.")
 
 ### Obtain PlayList information via API
-pl_url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=3"
+pl_url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=1"
 response = requests.get(pl_url)
 data = response.json()
 videos = data.get("items", [])
@@ -40,7 +40,7 @@ for video in videos:
         song_name = parts[1]
         print(artist_name)
         # Store top tracks of that singer to database
-        song_url = f'http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist={artist_name}&api_key={api_lastfm}&format=json'
+        song_url = f'http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist={artist_name}&api_key={api_lastfm}&limit=4000&format=json'
         response2 = requests.get(song_url)
         track_info = response2.json()
 

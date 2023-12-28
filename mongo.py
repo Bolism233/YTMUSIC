@@ -20,7 +20,8 @@ def insert_data(singer, songTitle):
 
 # Retrieve all documents in the collection
 # for doc in collection.find():
-#     collection.delete_many({'singer':'THE WEEKEND'})
+def delete_data(singer):
+    collection.delete_many({'singer': singer})
 #     print(doc)
 
 # Close the connection
