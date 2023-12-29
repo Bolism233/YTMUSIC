@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 
 username = 'rootuser'
 password = 'rootpass'
@@ -15,14 +16,35 @@ db = client['testdb']
 # Specify the collection to use
 collection = db['testcollection']
 
-def insert_data(singer, songTitle):
-    collection.insert_one({'singer':singer, 'songTitle': songTitle})
+collection.delete_many({})
 
-# Retrieve all documents in the collection
-# for doc in collection.find():
+# Iterate through the cursor and print information about each index
+# indexes = collection.list_indexes()
+# for index in indexes:
+#     print(index)
+    # only needs to be created once
+# collection.drop_index()
+# collection.create_index([("compositeKey", 1)], unique=True)
+
+
+def insert_data(artist, songTitle):
+    try:
+        collection.insert_one({'compositeKey': artist+songTitle, 'artist': artist, 'songTitle': songTitle})
+    except PyMongoError as e:
+        print(f"Duplicate songs {e}")
+# Lame way of avoiding duplicates
+# if collection.find_one({"artist": artist, "songTitle": songTitle}):
+#     print("This song already exists for the artist.")
+#     pass
+# else:
+#     # Insert the new song for the artist
+#     collection.insert_one({'artist':artist, 'songTitle': songTitle})
+
 def delete_data(singer):
-    collection.delete_many({'singer': singer})
-#     print(doc)
+    collection.delete_many({'artist': singer})
 
-# Close the connection
+
+def delete_all():
+    collection.delete_many({})
+
 # client.close()

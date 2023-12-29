@@ -1,6 +1,6 @@
 import requests, json, pylast, re
 from search import search
-from mongo import insert_data, delete_data
+from mongo import *
 from collections import defaultdict
 from credentials import api_key, api_lastfm, api_secret
 
@@ -32,15 +32,15 @@ for video in videos:
     video_title = snippet.get("title", "No Title")
     video_description = snippet.get("description", "No Description")
     video_id = video["snippet"]["resourceId"]["videoId"]
-
+    # delete_all()
     # print(f"Video Title: {video_title}")
     parts = video_title.split(" - ")
     if len(parts) >= 2:
-        artist_name = parts[0]
+        artist_name = "The Beatles"
         song_name = parts[1]
         print(artist_name)
         # Store top tracks of that singer to database
-        song_url = f'http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist={artist_name}&api_key={api_lastfm}&limit=4000&format=json'
+        song_url = f'http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist={artist_name}&api_key={api_lastfm}&limit=3250&format=json'
         response2 = requests.get(song_url)
         track_info = response2.json()
 
@@ -48,7 +48,7 @@ for video in videos:
         if 'toptracks' in track_info and 'track' in track_info['toptracks']:
             tracks = [track['name'] for track in track_info['toptracks']['track']]
             for track in tracks:
-                print(track)
+                # print(track)
                 insert_data(artist_name, track)
         else:
             print('No tracks found.')
