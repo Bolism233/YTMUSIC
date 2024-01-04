@@ -4,6 +4,7 @@ from mongo import *
 from collections import defaultdict
 from credentials import api_key, api_lastfm, api_secret
 
+
 ### Obtain User Playlist via link
 """ playlist_link = input("Enter your playlist link: ") """
 playlist_link = "https://youtube.com/playlist?list=PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj&si=aoAUKa4pzPtanlDT"
@@ -21,7 +22,7 @@ else:
     print("Invalid playlist link.")
 
 ### Obtain PlayList information via API
-pl_url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=1"
+pl_url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=20"
 response = requests.get(pl_url)
 data = response.json()
 videos = data.get("items", [])
@@ -36,22 +37,30 @@ for video in videos:
     # print(f"Video Title: {video_title}")
     parts = video_title.split(" - ")
     if len(parts) >= 2:
-        artist_name = "The Beatles"
+        artist_name = parts[0]
         song_name = parts[1]
+        page_number = 1
         print(artist_name)
         # Store top tracks of that singer to database
-        song_url = f'http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist={artist_name}&api_key={api_lastfm}&limit=3250&format=json'
-        response2 = requests.get(song_url)
-        track_info = response2.json()
-
-
+        track_info, tracks = get_all_tracks(artist_name, 1)
+        total_pages = int(track_info['toptracks']['@attr']['totalPages']) # number of total pages
+        # do the 1st page
         if 'toptracks' in track_info and 'track' in track_info['toptracks']:
             tracks = [track['name'] for track in track_info['toptracks']['track']]
             for track in tracks:
-                # print(track)
                 insert_data(artist_name, track)
-        else:
-            print('No tracks found.')
+            else:
+                print('No tracks found.')
+
+        for x in range(2, total_pages+1):
+            # x is the current page number
+            track_info, tracks = get_all_tracks(artist_name, x)
+            if 'toptracks' in track_info and 'track' in track_info['toptracks']:
+                tracks = [track['name'] for track in track_info['toptracks']['track']]
+                for track in tracks:
+                    insert_data(artist_name, track)
+                else:
+                    print('No tracks found.')
 
         # Use re.sub to remove the matched text
         pattern = r'\[.*?\]|\(.*?\)'

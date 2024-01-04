@@ -1,5 +1,7 @@
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
+from pymongo.errors import DuplicateKeyError
+import requests
+from credentials import *
 
 username = 'rootuser'
 password = 'rootpass'
@@ -25,12 +27,17 @@ collection.delete_many({})
     # only needs to be created once
 # collection.drop_index()
 # collection.create_index([("compositeKey", 1)], unique=True)
-
+def get_all_tracks(artist, page_number):
+    print(page_number)
+    song_url = f"http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist={artist}&api_key={api_lastfm}&limit=3250&page={page_number}&format=json"
+    response = requests.get(song_url).json()
+    tracks = [track['name'] for track in response['toptracks']['track']]
+    return response, tracks
 
 def insert_data(artist, songTitle):
     try:
-        collection.insert_one({'compositeKey': artist+songTitle, 'artist': artist, 'songTitle': songTitle})
-    except PyMongoError as e:
+        collection.insert_one({'compositeKey': artist+ "-" + songTitle, 'artist': artist, 'songTitle': songTitle})
+    except DuplicateKeyError as e:
         print(f"Duplicate songs {e}")
 # Lame way of avoiding duplicates
 # if collection.find_one({"artist": artist, "songTitle": songTitle}):
